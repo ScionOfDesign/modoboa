@@ -244,6 +244,7 @@ They are described just below:
 | Server port | The TCP port number used by the LDAP server | 389 |
 | Use a secure connection | Use an SSL/TLS connection to access the LDAP server | no |
 | Authentication method | Choose the authentication method to use | Direct bind |
+| Default domain | Optional domain appended to usernames that do not already contain one and do not match a local account, before the name is sent to the LDAP server. For example, `scion` becomes `scion@example.net`. A local account such as `admin` is left unchanged. Leave empty to disable. | |
 | User DN template (direct bind mode)|  The template used to construct a user\'s DN. It should contain one placeholder (ie.`%(user)s`) | |
 | Bind BN | The distinguished name to use when binding to the LDAP server. Leave empty for an anonymous bind | |
 | Bind password | The password to use when binding to the LDAP server (with \'Bind DN\') | |
