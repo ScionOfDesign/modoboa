@@ -3,7 +3,7 @@
     <v-toolbar color="white">
       <v-btn icon="mdi-arrow-left" size="small" variant="flat" @click="close" />
 
-      <v-btn-group color="primary" rounded="lg" density="compact" divided>
+      <v-btn-group class="email-actions" color="primary" rounded="lg" density="compact" divided>
         <v-btn prepend-icon="mdi-reply" @click="() => replyToEmail()">
           {{ $gettext('Reply') }}
         </v-btn>
@@ -168,8 +168,13 @@
       The message body is untrusted: render it in a sandboxed iframe
       (no scripts, opaque origin) so it can never reach the application
       context, even if the server-side HTML cleaner is bypassed.
+      Chromium does not repaint an in-place srcdoc change (Firefox does),
+      so :key recreates the iframe whenever the document changes and the
+      new srcdoc is applied on insertion.
+      See: https://issues.chromium.org/issues/555608153
     -->
     <iframe
+      :key="emailDocument"
       ref="emailFrame"
       class="email-frame"
       sandbox="allow-popups allow-popups-to-escape-sandbox"
@@ -389,5 +394,9 @@ const editDraft = () => {
   overflow-y: auto;
   border: none;
   background-color: #fff;
+}
+
+.email-actions :deep(.v-btn) {
+  overflow: hidden;
 }
 </style>
