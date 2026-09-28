@@ -80,6 +80,7 @@ SETTINGS_SAMPLE = {
         "enable_inactive_accounts": "True",
         "inactive_account_threshold": "30",
         "ldap_search_filter": "(mail=%(user)s)",
+        "ldap_default_domain": "",
         "ldap_secured": "none",
         "ldap_user_dn_template": "",
         "default_password": "Toto1000",

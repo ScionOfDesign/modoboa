@@ -50,6 +50,7 @@ CORE_SETTINGS = {
     "ldap_groups_search_base": "",
     "ldap_password_attribute": "userPassword",
     "ldap_auth_method": "searchbind",
+    "ldap_default_domain": "",
     "ldap_bind_dn": "",
     "ldap_bind_password": "",
     "ldap_search_base": "",
@@ -133,10 +134,16 @@ class ParametersAPITestCase(ModoAPITestCase):
                 "ldap_user_dn_template": "%(user)s",
                 "ldap_sync_account_dn_template": "%(user)s",
                 "ldap_search_filter": "mail=%(user)s",
+                "ldap_default_domain": "example.net",
             }
         )
         resp = self.client.put(url, data, format="json")
         self.assertEqual(resp.status_code, 200)
+
+        data["ldap_default_domain"] = "not a domain"
+        resp = self.client.put(url, data, format="json")
+        self.assertEqual(resp.status_code, 400)
+        self.assertIn("ldap_default_domain", resp.json())
 
     def test_doveadm_alarm(self):
         """Test that an alarm is opened, closed or reopened

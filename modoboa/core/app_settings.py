@@ -277,6 +277,19 @@ GLOBAL_PARAMETERS_STRUCT = collections.OrderedDict(
                             },
                         ),
                         (
+                            "ldap_default_domain",
+                            {
+                                "label": gettext_lazy("Default domain"),
+                                "display": "authentication_type=ldap",
+                                "help_text": gettext_lazy(
+                                    "Optional domain appended to usernames that do not "
+                                    "already contain one and do not match a local account. "
+                                    "For example, 'scion' becomes 'scion@example.net' before "
+                                    "it is sent to the LDAP server. Leave empty to disable."
+                                ),
+                            },
+                        ),
+                        (
                             "ldap_bind_dn",
                             {
                                 "label": gettext_lazy("Bind DN"),

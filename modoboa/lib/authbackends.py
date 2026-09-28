@@ -9,6 +9,23 @@ from modoboa.lib.email_utils import split_mailbox
 from modoboa.parameters import tools as param_tools
 
 
+def apply_default_domain(username, default_domain):
+    """Append the default domain when the username has none.
+
+    Local accounts are left untouched so names such as ``admin`` still
+    authenticate against the local database. Usernames that already
+    contain a domain are also left unchanged.
+    """
+    if not username or not default_domain:
+        return username
+    _local_part, domain = split_mailbox(username)
+    if domain is not None:
+        return username
+    if User.objects.filter(username__iexact=username, is_local=True).exists():
+        return username
+    return f"{username}@{default_domain.lstrip('@')}"
+
+
 class SMTPBackend:
     """A backend to authenticate against an SMTP server."""
 
@@ -119,10 +136,15 @@ try:
                 pass
             return user
 
-        def authenticate(self, *args, **kwargs):
-            if self.global_params["authentication_type"] == "ldap":
-                return super().authenticate(*args, **kwargs)
-            return None
+        def authenticate(self, request=None, username=None, password=None, **kwargs):
+            if self.global_params["authentication_type"] != "ldap":
+                return None
+            username = apply_default_domain(
+                username, self.global_params.get("ldap_default_domain")
+            )
+            return super().authenticate(
+                request, username=username, password=password, **kwargs
+            )
 
         @classmethod
         def setting_fullname(cls, setting):

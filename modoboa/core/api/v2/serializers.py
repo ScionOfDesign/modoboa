@@ -76,6 +76,9 @@ class CoreGlobalParametersSerializer(serializers.Serializer):
         choices=constants.LDAP_AUTH_METHODS,
         default="searchbind",
     )
+    ldap_default_domain = serializers.CharField(
+        default="", required=False, allow_blank=True, allow_null=True
+    )
     ldap_bind_dn = serializers.CharField(
         default="", required=False, allow_blank=True, allow_null=True
     )
@@ -189,6 +192,17 @@ class CoreGlobalParametersSerializer(serializers.Serializer):
             value % {"user": "toto"}
         except (KeyError, ValueError, TypeError):
             raise serializers.ValidationError(_("Invalid syntax")) from None
+        return value
+
+    def validate_ldap_default_domain(self, value):
+        """Accept an empty value or a bare domain name."""
+        if not value:
+            return ""
+        value = value.strip().lower().lstrip("@")
+        if not value or "@" in value or " " in value:
+            raise serializers.ValidationError(
+                _("Enter a domain name, without a username or '@'.")
+            )
         return value
 
     def validate_rounds_number(self, value):
